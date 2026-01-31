@@ -33,7 +33,10 @@ public enum NodeIndex
     NpcQuestion1,
     NpcQuestion1_Reaction1,
     NpcQuestion1_Reaction2,
+    NpcQuestion1_Reaction3,
     NpcQuestion2,
+    NpcQuestion2_Answer1,
+    NpcQuestion2_Answer2,
     NpcQuestion2_Reaction1,
     NpcQuestion2_Reaction2,
     NpcQuestion3,
@@ -45,18 +48,15 @@ public enum NodeIndex
 
 public static class DialogSystem
 {
-    private static PlayerQuestionNode VampireQuestions = new(
-        new PlayerQuestion("Ask about his job", "So, you work at a gas station, huh? What’s that like?", NodeIndex.NpcAnswer1_1),
-        new PlayerQuestion("Ask about his intentions", "Why do you want to live in a shared flat with me?", NodeIndex.NpcAnswer2_1)
-    );
-
     public static Dictionary<Dialog, DialogTree> Dialogs { get; } = new()
     {
         [Dialog.CamVampire] = new(new()
         {
             [NodeIndex.Greeting] = new SimpleNode(NodeIndex.PlayerQuestion, Who.Npc, "Good day, my dear one. I’d like to introduce myself: My name is Wilfred Novak, but you can call me Willy. I’m excited to make your acquaintance."),
 
-            [NodeIndex.PlayerQuestion] = VampireQuestions,
+            [NodeIndex.PlayerQuestion] = new PlayerQuestionNode(
+                new PlayerQuestion("Ask about his job", "So, you work at a gas station, huh? What’s that like?", NodeIndex.NpcAnswer1_1),
+                new PlayerQuestion("Ask about his intentions", "Why do you want to live in a shared flat with me?", NodeIndex.NpcAnswer2_1)),
             [NodeIndex.NpcAnyQuestion] = new NpcAnyQustionNode(NodeIndex.NpcQuestion1, NodeIndex.NpcQuestion2),
 
             [NodeIndex.NpcAnswer1_1] = new OptionsNode("It’s quiet. I work at night, so I won’t disturb your slumber. But I’d love to be a детский комбайн. Ah, I mean a kindergardener.", new SimpleOption("Do you mean a kindergarten teacher?", NodeIndex.NpcAnswer1_2)),
@@ -66,18 +66,49 @@ public static class DialogSystem
 
             [NodeIndex.NpcQuestion1] = new OptionsNode("I appreciate the company of fellow humans. Do mortals frequently visit this habitat?",
                 new SimpleOption("Yes, my friends and I love to hang out in my living room.", NodeIndex.NpcQuestion1_Reaction1),
-                new SimpleOption("No, I’m a lone wolf.", NodeIndex.NpcQuestion1_Reaction2)
-            ),
-            [NodeIndex.NpcQuestion1_Reaction1] = new SimpleNode(NodeIndex.PlayerQuestion, Who.Npc, "Wonderful..."),
-            [NodeIndex.NpcQuestion1_Reaction2] = new SimpleNode(NodeIndex.PlayerQuestion, Who.Npc, " Oh… That’s too bad."),
+                new SimpleOption("No, I’m a lone wolf.", NodeIndex.NpcQuestion1_Reaction2)),
+            [NodeIndex.NpcQuestion1_Reaction1] = new SimpleNode(NodeIndex.PlayerQuestion, Who.Npc, "Wonderful…"),
+            [NodeIndex.NpcQuestion1_Reaction2] = new SimpleNode(NodeIndex.PlayerQuestion, Who.Npc, "Oh… That’s too bad."),
 
             [NodeIndex.NpcQuestion2] = new OptionsNode("How is the parking situation? I wish to bring my automobiles with me.",
                 new SimpleOption("There are a lot of parking spaces. I’ll ring the landlord to set you up with some.", NodeIndex.NpcQuestion2_Reaction1),
-                new SimpleOption("Cars? Plural? Good luck with that, I can’t even get a space for my own ride.", NodeIndex.NpcQuestion2_Reaction2)
-            ),
+                new SimpleOption("Cars? Plural? Good luck with that, I can’t even get a space for my own ride.", NodeIndex.NpcQuestion2_Reaction2)),
             [NodeIndex.NpcQuestion2_Reaction1] = new SimpleNode(NodeIndex.PlayerQuestion, Who.Npc, "You’re too kind my cherished friend."),
             [NodeIndex.NpcQuestion2_Reaction2] = new SimpleNode(NodeIndex.PlayerQuestion, Who.Npc, "That’s unfortunate."),
+
+            [NodeIndex.End] = new SimpleNode(null, Who.Npc, "Still here? You must be quite smitten with me."),
         }),
+        [Dialog.CamGamer] = new(new()
+        {
+            [NodeIndex.Greeting] = new SimpleNode(NodeIndex.PlayerQuestion, Who.Npc, "Hiya. I’m xX_T0x1cTammy_Xx. Or Tamara, if you insist. Nice to meet you."),
+
+            [NodeIndex.PlayerQuestion] = new PlayerQuestionNode(
+                new PlayerQuestion("Ask about her job", "You work in customer service? Sounds exhausting.", NodeIndex.NpcAnswer1_1),
+                new PlayerQuestion("Ask about games", "What kind of games do you play?", NodeIndex.NpcAnswer2_1)),
+            [NodeIndex.NpcAnyQuestion] = new NpcAnyQustionNode(NodeIndex.NpcQuestion1, NodeIndex.NpcQuestion2),
+
+            [NodeIndex.NpcAnswer1_1] = new SimpleNode(NodeIndex.NpcAnyQuestion, Who.Npc, "Don’t remind me. I used to dislike people, but now I loathe them. It’s just a matter of time until I’ll strangle someone through the phone. Please, let’s change the topic."),
+            [NodeIndex.NpcAnswer2_1] = new SimpleNode(NodeIndex.NpcAnyQuestion, Who.Npc, "League, Overwatch, Sims, CoD, WiiFit… You name it, I played it."),
+
+            [NodeIndex.NpcQuestion1] = new OptionsNode("What’s your gamertag? I’ll add you.",
+                new SimpleOption("I’m Dråg0nS!ayyyy3rz.", NodeIndex.NpcQuestion1_Reaction1),
+                new SimpleOption("Gamertag?", NodeIndex.NpcQuestion1_Reaction2),
+                new SimpleOption("I just use my name. All caps, no special characters.", NodeIndex.NpcQuestion1_Reaction3)),
+            [NodeIndex.NpcQuestion1_Reaction1] = new SimpleNode(NodeIndex.PlayerQuestion, Who.Npc, "Dope."),
+            [NodeIndex.NpcQuestion1_Reaction2] = new SimpleNode(NodeIndex.PlayerQuestion, Who.Npc, "Nevermind, noob."),
+            [NodeIndex.NpcQuestion1_Reaction3] = new SimpleNode(NodeIndex.PlayerQuestion, Who.Npc, "Bold choice…"),
+
+            [NodeIndex.NpcQuestion2] = new OptionsNode("What kind of roommate relationship do you prefer?",
+                new SimpleOption("distant relationship", NodeIndex.NpcQuestion2_Answer1),
+                new SimpleOption("close relationship", NodeIndex.NpcQuestion2_Answer2)),
+            [NodeIndex.NpcQuestion2_Answer1] = new SimpleNode(NodeIndex.NpcQuestion2_Reaction1, Who.Player, "I wasn’t close with my last roommate and I plan to keep it that way."),
+            [NodeIndex.NpcQuestion2_Answer2] = new SimpleNode(NodeIndex.NpcQuestion2_Reaction2, Who.Player, "I despise having a roommate for convenience only. I’d prefer someone who loves to occasionally cook dinner together, host friends with or have cozy movie nights."),
+            [NodeIndex.NpcQuestion2_Reaction1] = new SimpleNode(NodeIndex.NpcAnyQuestion, Who.Npc, "Perfect. My current roommates are an imposition."),
+            [NodeIndex.NpcQuestion2_Reaction2] = new SimpleNode(NodeIndex.NpcAnyQuestion, Who.Npc, "No, thank you."),
+
+            [NodeIndex.End] = new SimpleNode(null, Who.Npc, "Are we done here? My horde is calling me."),
+        }),
+
     };
 }
 
@@ -103,9 +134,9 @@ public class SimpleNode : IDialogNode
 {
     public Who Who { get; }
     public string Prompt { get; }
-    public NodeIndex NextNode { get; }
+    public NodeIndex? NextNode { get; }
 
-    public SimpleNode(NodeIndex nextNode, Who who, string prompt)
+    public SimpleNode(NodeIndex? nextNode, Who who, string prompt)
     {
         Who = who;
         Prompt = prompt;
@@ -115,7 +146,10 @@ public class SimpleNode : IDialogNode
     public void Enter(DialogStateMachine stateMachine)
     {
         stateMachine.ShowDialog(Who, Prompt);
-        stateMachine.Transition(NextNode);
+        if (NextNode.HasValue)
+        {
+            stateMachine.Transition(NextNode.Value);
+        }
     }
 }
 
@@ -217,6 +251,16 @@ public class PlayerQuestionNode : IDialogNode
     public void OptionSelected(DialogStateMachine stateMachine, int selectedOption)
     {
         var option = LastShownOptions[selectedOption];
+        var askedQuestions = stateMachine.Data[DataIndex.PlayerAskedQuestions] as ISet<PlayerQuestion>;
+        if (askedQuestions == null)
+        {
+            Debug.LogWarning("should not be null!");
+        }
+        else
+        {
+            askedQuestions.Add(option);
+        }
+
         stateMachine.ShowDialog(Who.Player, option.Text);
         stateMachine.Transition(option.NextNode);
     }

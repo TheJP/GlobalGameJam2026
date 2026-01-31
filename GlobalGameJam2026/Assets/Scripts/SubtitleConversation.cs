@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 using UnityEngine.UIElements;
 
@@ -24,8 +25,9 @@ public class SubtitleConversation : MonoBehaviour
     private UIDocument document;
     private VisualElement root;
     private VisualElement subtitlesParent;
+    private VisualElement optionsParent;
 
-    private readonly Queue<ICommand> commands = new();
+    private readonly LinkedList<ICommand> commands = new();
 
     public IEnumerator Start()
     {
@@ -33,14 +35,14 @@ public class SubtitleConversation : MonoBehaviour
         root = document.rootVisualElement;
         subtitlesParent = root.Q("Subtitles");
         subtitlesParent.Clear();
+        optionsParent = root.Q("Options");
+        optionsParent.Clear();
 
         var vampireStateMachine = new DialogStateMachine();
-        vampireStateMachine.OnShowDialog += (who, text) => commands.Enqueue(new TextCommand(who, text));
-        vampireStateMachine.OnShowOptions += (options) => commands.Enqueue(new OptionsCommand(options));
-        vampireStateMachine.StartDialog(Dialog.CamVampire);
+        vampireStateMachine.OnShowDialog += (who, text) => commands.AddLast(new TextCommand(who, text));
+        vampireStateMachine.OnShowOptions += (options) => commands.AddLast(new OptionsCommand(options));
+        vampireStateMachine.StartDialog(Dialog);
 
-
-        int? selectedOption = null;
         ICommand currentCommand = null;
 
         while (true)
@@ -55,10 +57,39 @@ public class SubtitleConversation : MonoBehaviour
                 }
                 else
                 {
-                    currentCommand = commands.Dequeue();
+                    currentCommand = commands.First();
+                    commands.RemoveFirst();
                     if (currentCommand is TextCommand)
                     {
                         subtitlesParent.Clear();
+                    }
+                    else if (currentCommand is OptionsCommand optionsCommand)
+                    {
+                        optionsParent.Clear();
+                        for (int i = 0; i < optionsCommand.Options.Count; ++i)
+                        {
+                            var index = i;
+                            var option = optionsCommand.Options[i];
+                            var button = new Button(() =>
+                            {
+                                optionsParent.Clear(); // TODO: Animation?
+                                vampireStateMachine.DialogNode.OptionSelected(vampireStateMachine, index);
+                                currentCommand = null;
+                            });
+                            button.text = option;
+                            optionsParent.Add(button);
+                        }
+                    }
+                    else if (currentCommand is ContinueCommand continueCommand)
+                    {
+                        optionsParent.Clear();
+                        var button = new Button(() =>
+                        {
+                            optionsParent.Clear(); // TODO: Animation?
+                            currentCommand = null;
+                        });
+                        button.text = "Continue";
+                        optionsParent.Add(button);
                     }
                 }
             }
@@ -71,6 +102,10 @@ public class SubtitleConversation : MonoBehaviour
                     //var lineBreak = new VisualElement();
                     //lineBreak.style.width = new(new Length(100f, LengthUnit.Percent));
                     //subtitlesParent.Add(lineBreak);
+                    if (commands.Count > 0 && commands.First() is TextCommand)
+                    {
+                        commands.AddFirst(new ContinueCommand());
+                    }
                     continue;
                 }
 
@@ -99,12 +134,11 @@ public class SubtitleConversation : MonoBehaviour
                 {
                     yield return new WaitForSeconds(0.5f);
                 }
+                else if (trimmedWord.EndsWith(','))
+                {
+                    yield return new WaitForSeconds(0.3f);
+                }
 
-            }
-            else if (currentCommand is OptionsCommand optionsCommand)
-            {
-                // TODO
-                Debug.Log(optionsCommand.Options);
             }
 
             //string word = "";
@@ -126,7 +160,7 @@ class TextCommand : ICommand
     public TextCommand(Who who, string text)
     {
         Who = who;
-        Text = new(text.Split());
+        Text = new(text.Trim().Split());
     }
 }
 
@@ -136,3 +170,5 @@ class OptionsCommand : ICommand
 
     public OptionsCommand(IList<string> options) => Options = options;
 }
+
+class ContinueCommand : ICommand { }
