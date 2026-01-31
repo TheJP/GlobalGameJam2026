@@ -407,6 +407,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9bf180df2311ffc4b887867942ec0861, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  <Dialog>k__BackingField: 1
+  <PlayerFont>k__BackingField: {fileID: 0}
+  <NpcFont>k__BackingField: {fileID: 0}
+  <PlayerColor>k__BackingField: {r: 0.33940506, g: 0.8238994, b: 0.36473808, a: 1}
+  <NpcColor>k__BackingField: {r: 0.8406708, g: 0.35336366, b: 0.35336366, a: 1}
 --- !u!114 &2123459586
 MonoBehaviour:
   m_ObjectHideFlags: 0
