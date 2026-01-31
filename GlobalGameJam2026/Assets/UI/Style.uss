@@ -1,0 +1,22 @@
+VisualElement {
+}
+
+#SubtitlesBox Label {
+    font-size: 20px;
+    color: rgb(203, 203, 203);
+    background-color: rgba(0, 0, 0, 0.54);
+    margin: 0;
+    padding: 10px 5px;
+    transition-property: margin-left, opacity;
+    transition-duration: 0.5s, 0.5s;
+    transition-timing-function: ease, linear;
+    transition-delay: 0s, 0s;
+}
+
+#OptionsBox Button {
+    font-size: 20px;
+    border-top-left-radius: 20px;
+    border-top-right-radius: 20px;
+    border-bottom-right-radius: 20px;
+    border-bottom-left-radius: 20px;
+}

@@ -1,0 +1,21 @@
+<ui:UXML xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" noNamespaceSchemaLocation="../../UIElementsSchema/UIElements.xsd" editor-extension-mode="False">
+    <Style src="project://database/Assets/UI/Style.uss?fileID=7433441132597879392&amp;guid=81b2e7b768d57c04f9bfafa99d3f3a05&amp;type=3#Style" />
+    <ui:VisualElement style="flex-grow: 1; width: 100%; height: 100%;">
+        <ui:VisualElement name="SubtitlesBox" style="height: 30%; top: 50%; width: 60%; left: 20%; position: absolute;">
+            <ui:VisualElement name="Subtitles" style="flex-grow: 1; justify-content: flex-start; flex-direction: row; flex-wrap: wrap; width: 100%; height: 100%; align-content: flex-end; align-items: center;">
+                <ui:Label text="Label" />
+                <ui:Label text="ioaertn  iearnt oiqaernt iorasent setn stensetn stne" name="Label" />
+                <ui:Label text="Label" />
+                <ui:Label text="Label" />
+                <ui:Label text="Label" />
+            </ui:VisualElement>
+        </ui:VisualElement>
+        <ui:VisualElement name="OptionsBox" style="flex-grow: 1; width: 60%; height: 15%; left: 20%; position: absolute; top: 80%;">
+            <ui:VisualElement name="Options" style="flex-grow: 1; flex-direction: row; align-items: center; justify-content: center; flex-wrap: wrap;">
+                <ui:Button text="Button" />
+                <ui:Button text="Button" />
+                <ui:Button text="Button" />
+            </ui:VisualElement>
+        </ui:VisualElement>
+    </ui:VisualElement>
+</ui:UXML>
